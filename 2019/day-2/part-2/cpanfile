@@ -1,0 +1,4 @@
+requires 'autodie';
+requires 'Const::Fast';
+requires 'IPC::System::Simple';
+requires 'Moo';
