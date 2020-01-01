@@ -3,16 +3,14 @@
 use strict;
 use warnings;
 
-use FindBin;
-use lib "$FindBin::Bin/../lib";
 use Advent::Intcode;
 use Advent::Input;
 
 my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
 
 # apply previous state
-$sim->memory->[1] = 12;
-$sim->memory->[2] = 2;
+$sim->set_address( 1, 12 );
+$sim->set_address( 2, 2 );
 
 $sim->run();
 

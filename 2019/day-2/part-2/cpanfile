@@ -1,5 +1,5 @@
 requires 'autodie';
 requires 'Const::Fast';
-requires 'IPC::System::Simple';
+requires 'MooX::HandlesVia';
 requires 'Moo';
 requires 'namespace::clean';

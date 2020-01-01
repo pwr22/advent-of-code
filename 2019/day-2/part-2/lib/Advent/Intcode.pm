@@ -6,6 +6,7 @@ use autodie;
 use Const::Fast;
 use English '-no_match_vars';
 use Moo;
+use MooX::HandlesVia;
 use overload q{""} => \&as_str;
 use Carp;
 
@@ -19,7 +20,14 @@ has 'initial_state' => (
     init_arg => 'state',
 );
 
-has 'memory' => ( is => 'lazy', );
+has 'memory' => (
+    is          => 'lazy',
+    handles_via => 'Array',
+    handles     => {
+        get_address => 'get',
+        set_address => 'set',
+    }
+);
 
 has '_instr_ptr' => (
     is      => 'rw',
