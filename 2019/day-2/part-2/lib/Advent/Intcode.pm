@@ -2,7 +2,7 @@ package Advent::Intcode;
 
 use strict;
 use warnings;
-use autodie ':all';
+use autodie;
 use Const::Fast;
 use English '-no_match_vars';
 use Moo;

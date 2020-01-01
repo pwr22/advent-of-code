@@ -1,7 +1,16 @@
 FROM perl
 
-COPY . /build
-WORKDIR /build
-RUN curl -fsSL --compressed https://git.io/cpm | perl - install --global
+# cpm is much faster
+RUN cpanm --notest App::cpm
 
-CMD prove
+# start of by only copying across the list of dependencies and install them as a layering optimisation
+WORKDIR /deps
+COPY cpanfile .
+RUN cpm install --global
+
+# now copy across everything else, build, test and install
+WORKDIR /build
+COPY . .
+RUN perl Makefile.PL && make test && make install
+
+CMD solution
