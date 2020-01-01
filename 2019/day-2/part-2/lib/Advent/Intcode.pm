@@ -26,6 +26,12 @@ has '_instr_ptr' => (
     default => 0,
 );
 
+sub _inc_instr_ptr {
+    my ( $self, $amount ) = @_;
+    $self->_instr_ptr( $self->_instr_ptr + $amount );
+    return;
+}
+
 sub _build_memory {
     my $self = shift;
     my $s    = $self->initial_state;
@@ -43,7 +49,7 @@ const my $BINARY_OP_LENGTH => 4;
 # Executes an Intcode until it completes.
 #
 # Throws exceptions on an unknown op code or overrunning memory without halting.
-# 
+#
 # TODO add debugging.
 sub run {
     my $self = shift;
@@ -73,7 +79,7 @@ sub _add {
     $self->memory->[$result_addr] = $val_1 + $val_2;
 
     # increment the intstruction pointer
-    $self->_instr_ptr( $self->_instr_ptr + $BINARY_OP_LENGTH );
+    $self->_inc_instr_ptr($BINARY_OP_LENGTH);
 
     return;
 }
@@ -87,7 +93,7 @@ sub _mul {
     $self->memory->[$result_addr] = $val_1 * $val_2;
 
     # increment the intstruction pointer
-    $self->_instr_ptr( $self->_instr_ptr + $BINARY_OP_LENGTH );
+    $self->_inc_instr_ptr($BINARY_OP_LENGTH);
 
     return;
 }
