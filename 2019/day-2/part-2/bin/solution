@@ -14,4 +14,4 @@ $sim->set_address( 2, 2 );
 
 $sim->run();
 
-printf "%s\n", $sim->memory->[0] or die $!;
+printf "%s\n", $sim->get_address(0) or die $!;
