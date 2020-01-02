@@ -2,16 +2,11 @@
 
 use strict;
 use warnings;
+use feature 'say';
 
 use Advent::Intcode;
 use Advent::Input;
 
 my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
-
-# apply previous state
-$sim->set_address( 1, 12 );
-$sim->set_address( 2, 2 );
-
-$sim->run();
-
-printf "%s\n", $sim->get_address(0) or die $!;
+my ($noun, $verb) = $sim->find_inputs_for(19690720);
+say 100 * $noun + $verb;

@@ -82,7 +82,8 @@ sub run {
 sub _add {
     my $self = shift;
 
-    my ( $addr_1, $addr_2, $result_addr ) = $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + 4 ];
+    my ( $addr_1, $addr_2, $result_addr ) =
+      $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + $BINARY_OP_LENGTH ];
     my ( $val_1, $val_2 ) = $self->memory->@[ $addr_1, $addr_2 ];
     $self->memory->[$result_addr] = $val_1 + $val_2;
 
@@ -96,7 +97,8 @@ sub _add {
 sub _mul {
     my $self = shift;
 
-    my ( $addr_1, $addr_2, $result_addr ) = $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + 4 ];
+    my ( $addr_1, $addr_2, $result_addr ) =
+      $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + $BINARY_OP_LENGTH ];
     my ( $val_1, $val_2 ) = $self->memory->@[ $addr_1, $addr_2 ];
     $self->memory->[$result_addr] = $val_1 * $val_2;
 
@@ -110,6 +112,45 @@ sub _mul {
 sub as_str {
     my $self = shift;
     return join q{,}, $self->memory->@*;
+}
+
+sub set_noun {
+    my ( $self, $val ) = @_;
+    return $self->set_address( 1, $val );
+}
+
+sub set_verb {
+    my ( $self, $val ) = @_;
+    return $self->set_address( 2, $val );
+}
+
+sub get_output {
+    my $self = shift;
+    return $self->get_address(0);
+}
+
+const my $MIN_FIND_VALUE => 0;
+const my $MAX_FIND_VALUE => 99;
+
+# Searches or an returns an input noun and verb which produce a given output value.
+sub find_inputs_for {
+    my ( $self, $output ) = @_;
+
+    for my $noun ( $MIN_FIND_VALUE .. $MAX_FIND_VALUE ) {
+        for my $verb ( $MIN_FIND_VALUE .. $MAX_FIND_VALUE ) {
+            my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
+            $sim->set_noun($noun);
+            $sim->set_verb($verb);
+            $sim->run();
+
+            if ( $sim->get_output() == $output ) {
+                return $noun, $verb;
+            }
+        }
+    }
+
+    croak
+"could not find inputs giving output $output inside search range of $MIN_FIND_VALUE to $MAX_FIND_VALUE inclusive.";
 }
 
 1;
