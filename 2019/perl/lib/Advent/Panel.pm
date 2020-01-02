@@ -11,53 +11,9 @@ use List::Util qw( min );
 use Data::GUID;
 use feature 'say';
 
-use Advent::Input;
+use Advent::Panel::Location;
 
 our $VERSION = v0.0.1;
-
-package Advent::Panel::Location {
-    use strict;
-    use warnings;
-    use autodie;
-    use Const::Fast;
-    use Moo;
-    use MooX::HandlesVia;
-    use Types::Standard ':all';
-
-    use overload (
-        '-' => sub {
-            my ( $self, $other ) = @_;
-            return abs( $self->x - $other->x ) + abs( $self->y - $other->y );
-        },
-        '""' => sub {
-            my $self = shift;
-            return sprintf "(%s, %s)", $self->x, $self->y;
-        },
-    );
-
-    use Carp;
-
-    has [qw[ x y ]] => (
-        is       => 'ro',
-        isa      => Num,
-        required => 1,
-    );
-
-    has '_wires' => (
-        is          => 'ro',
-        handles_via => 'Hash',
-        default     => sub { {} },
-        handles     => {
-            'add_wire'       => 'set',
-            '_wires_present' => 'count',
-        },
-    );
-
-    sub is_intersection {
-        my $self = shift;
-        return $self->_wires_present >= 2;
-    }
-}
 
 has '_port' => (
     is      => 'ro',
@@ -90,7 +46,7 @@ sub add_wire {
     my ( $self, $spec ) = @_;
     my $id = Data::GUID->new()->as_string();    # just has to be different for each wire
 
-    my ( $x, $y ) = ( $self->_port->x, $self->_port->y );
+    my ( $x, $y, $steps ) = ( $self->_port->x, $self->_port->y, 0 );
     my @runs = split /,/, $spec;
     for (@runs) {
         my ( $dir, $len ) = $_ =~ /^([UDLR])(\d+)$/ or croak "invalid wire piece $_ in $spec";
@@ -101,8 +57,9 @@ sub add_wire {
             $y-- if $dir eq 'D';
             $x++ if $dir eq 'R';
             $x-- if $dir eq 'L';
+            $steps++;
 
-            $self->_get_loc( $x, $y )->add_wire($id);
+            $self->_get_loc( $x, $y )->add_wire( $id, $steps );
         }
 
     }
@@ -117,6 +74,15 @@ sub get_closest_intersect_distance {
       or croak 'there are no isects';
 
     return min map { $_ - $self->_port } @intrsects;
+}
+
+sub get_shortest_intersect_steps {
+    my $self = shift;
+
+    my @intrsects = grep { $_->is_intersection() } values $self->_grid->%*
+      or croak 'there are no isects';
+
+    return min map { $_->total_steps } @intrsects;
 }
 
 1;

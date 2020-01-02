@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use Advent::Panel;
+use Advent::Input;
+
+my ( $wire_1, $wire_2 ) = ( $Advent::Input::DAY_3_LINE_1, $Advent::Input::DAY_3_LINE_2 );
+
+my $panel = Advent::Panel->new();
+$panel->add_wire($wire_1);
+$panel->add_wire($wire_2);
+say $panel->get_shortest_intersect_steps();
