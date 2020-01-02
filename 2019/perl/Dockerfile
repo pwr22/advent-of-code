@@ -11,6 +11,6 @@ RUN cpm install --global
 # now copy across everything else, build, test and install
 WORKDIR /build
 COPY . .
-RUN perl Makefile.PL && make test && make install
+RUN prove -lv && perl Makefile.PL && make install
 
 CMD bash

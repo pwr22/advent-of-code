@@ -3,3 +3,7 @@ requires 'Const::Fast';
 requires 'MooX::HandlesVia';
 requires 'Moo';
 requires 'namespace::clean';
+requires 'Type::Tiny';
+requires 'Data::GUID';
+requires 'List::Util';
+requires 'Data::Printer';
