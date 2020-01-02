@@ -1,0 +1,12 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use Advent::PasswordCracker;
+use Advent::Input;
+
+my $c =
+  Advent::PasswordCracker->new( start => $Advent::Input::DAY_4_RANGE_START, end => $Advent::Input::DAY_4_RANGE_END );
+say $c->get_candidate_count();
