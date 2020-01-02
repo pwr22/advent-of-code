@@ -29,4 +29,16 @@ sub get_candidate_count {
     return $count;
 }
 
+# Find and return the count of all valid revised password candidates
+sub get_revised_candidate_count {
+    my $self = shift;
+
+    my $count = 0;
+    for my $candid ( $self->start .. $self->end ) {
+        $count++ if RevisedPassword->check($candid);
+    }
+
+    return $count;
+}
+
 1;
