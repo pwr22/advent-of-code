@@ -9,4 +9,4 @@ use Advent::Input;
 
 my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
 my ($noun, $verb) = $sim->find_inputs_for(19690720);
-say 100 * $noun + $verb;
+say "$0: ", 100 * $noun + $verb;

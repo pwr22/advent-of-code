@@ -13,4 +13,4 @@ WORKDIR /build
 COPY . .
 RUN prove -lv && perl Makefile.PL && make install
 
-CMD bash
+CMD for prog in /usr/local/bin/day_*; do $prog; done

@@ -9,4 +9,4 @@ use Advent::Input;
 
 my $c =
   Advent::PasswordCracker->new( start => $Advent::Input::DAY_4_RANGE_START, end => $Advent::Input::DAY_4_RANGE_END );
-say $c->get_candidate_count();
+say "$0: ", $c->get_candidate_count();

@@ -12,4 +12,5 @@ my ( $wire_1, $wire_2 ) = ( $Advent::Input::DAY_3_LINE_1, $Advent::Input::DAY_3_
 my $panel = Advent::Panel->new();
 $panel->add_wire($wire_1);
 $panel->add_wire($wire_2);
-say $panel->get_closest_intersect_distance();
+
+say "$0: ", $panel->get_closest_intersect_distance();

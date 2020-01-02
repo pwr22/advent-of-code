@@ -34,6 +34,7 @@ const my $double_digits => declare as $digits,
       unless length($_) >= 2;
 
     for my $idx ( 1 .. length($_) - 1 ) {
+        # do we have double digits?
         return 1
           if substr( $_, $idx, 1 ) == substr( $_, $idx - 1, 1 );
     }
