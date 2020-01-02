@@ -13,4 +13,4 @@ WORKDIR /build
 COPY . .
 RUN perl Makefile.PL && make test && make install
 
-CMD solution
+CMD bash

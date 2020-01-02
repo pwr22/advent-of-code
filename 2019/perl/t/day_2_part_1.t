@@ -2,10 +2,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 6;
+use Test::More tests => 4;
 
 use Advent::Intcode;
-use Advent::Input;
 
 # [ <INPUT_INTCODE>, <OUTPUT_INTCODE> ]
 my @testcases = (
@@ -20,15 +19,4 @@ for (@testcases) {
     my $sim = Advent::Intcode->new( state => $start_state );
     $sim->run();
     is( $sim->as_str(), $exp_state );
-}
-
-# [ <INTCODE> <DESIRED_OUTPUT> <TARGET_NOUN> <TARGET_VERB> ]
-@testcases = ( [ $Advent::Input::DAY_2, 19690720, 57, 41 ], );
-
-for (@testcases) {
-    my ( $start_state, $output, $exp_noun, $exp_verb ) = $_->@*;
-    my $sim = Advent::Intcode->new( state => $start_state );
-    my ( $noun, $verb ) = $sim->find_inputs_for($output);
-    is( $noun, $exp_noun );
-    is( $verb, $exp_verb );
 }
