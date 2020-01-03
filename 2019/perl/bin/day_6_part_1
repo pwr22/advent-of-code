@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use Advent::OrbitMap;
+use Advent::Input;
+
+my $m = Advent::OrbitMap->new( spec => $Advent::Input::DAY_6 );
+say "$0: ", $m->get_total_orbits();
