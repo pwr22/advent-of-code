@@ -60,14 +60,19 @@ sub _build_memory {
     return \@code;
 }
 
-const my $ADD    => 01;
-const my $MUL    => 02;
-const my $INPUT  => 03;
-const my $OUTPUT => 04;
-const my $HALT   => 99;
+const my $ADD           => '01';
+const my $MUL           => '02';
+const my $INPUT         => '03';
+const my $OUTPUT        => '04';
+const my $JUMP_IF_TRUE  => '05';
+const my $JUMP_IF_FALSE => '06';
+const my $LESS_THAN     => '07';
+const my $EQUALS        => '08';
+const my $HALT          => '99';
 
-const my $BINARY_INSTR_LENGTH => 4;
-const my $IO_INSTR_LENGTH     => 2;
+const my $BINARY_INSTR_LENGTH       => 4;
+const my $IO_INSTR_LENGTH           => 2;
+const my $CONTROL_FLOW_INSTR_LENGTH => 3;
 
 # Executes an Intcode until it completes.
 #
@@ -80,26 +85,31 @@ sub run {
     while ( $self->_instr_ptr < $self->memory->@* ) {
         my $op = $self->memory->[ $self->_instr_ptr ];
 
-        my ( $op_code, @param_modes ) = _parse_instr($op);
+        my ( $op_code, @param_modes ) = _decode_instr($op);
 
         # TODO move to dispatch table off the op code
         return if $op_code == $HALT;
-        $self->_add(@param_modes),    next if $op_code == $ADD;
-        $self->_mul(@param_modes),    next if $op_code == $MUL;
-        $self->_input(@param_modes),  next if $op_code == $INPUT;
-        $self->_output(@param_modes), next if $op_code == $OUTPUT;
+        $self->_add(@param_modes),           next if $op_code == $ADD;
+        $self->_mul(@param_modes),           next if $op_code == $MUL;
+        $self->_input(@param_modes),         next if $op_code == $INPUT;
+        $self->_output(@param_modes),        next if $op_code == $OUTPUT;
+        $self->_jump_if_true(@param_modes),  next if $op_code == $JUMP_IF_TRUE;
+        $self->_jump_if_false(@param_modes), next if $op_code == $JUMP_IF_FALSE;
+        $self->_less_than(@param_modes),     next if $op_code == $LESS_THAN;
+        $self->_equals(@param_modes),        next if $op_code == $EQUALS;
 
         croak "Unknown op code $op_code";
     }
 
-    croak "instruction pointer has overrun the end of memory";
+    croak sprintf "instruction pointer %s has overrun the end of memory %s", $self->_instr_ptr,
+      scalar $self->memory->@*;
 }
 
 const my $PARAM_POSITION_MODE  => 0;
 const my $PARAM_IMMEDIATE_MODE => 1;
 
 # Parses an instruction into the op code and parameter modes
-sub _parse_instr {
+sub _decode_instr {
     my $op = shift;
 
     my $expanded = sprintf "%05d", $op;
@@ -182,6 +192,65 @@ sub _output {
     my $val = $self->_get_param( 1, $mode );
     push $self->output->@*, $val;
     $self->_inc_instr_ptr($IO_INSTR_LENGTH);
+
+    return;
+}
+
+sub _is_true {
+    my $val = shift;
+    return $val != 0;
+}
+
+# Executes a jump if true instruction.
+sub _jump_if_true {
+    my ( $self, $cond_mode, $trgt_mode ) = @_;
+    my ( $cond, $trgt ) = ( $self->_get_param( 1, $cond_mode ), $self->_get_param( 2, $trgt_mode ) );
+
+    if ( _is_true($cond) ) {
+        $self->_instr_ptr($trgt);
+    }
+    else {
+        $self->_inc_instr_ptr($CONTROL_FLOW_INSTR_LENGTH);
+    }
+
+    return;
+}
+
+# Executes a jump if false instruction.
+sub _jump_if_false {
+    my ( $self, $cond_mode, $trgt_mode ) = @_;
+    my ( $cond, $trgt ) = ( $self->_get_param( 1, $cond_mode ), $self->_get_param( 2, $trgt_mode ) );
+
+    if ( not _is_true($cond) ) {
+        $self->_instr_ptr($trgt);
+    }
+    else {
+        $self->_inc_instr_ptr($CONTROL_FLOW_INSTR_LENGTH);
+    }
+
+    return;
+}
+
+# Executes a less than instruction.
+sub _less_than {
+    my ( $self, $left_mode, $right_mode, $result_mode ) = @_;
+    my ( $left, $right ) = ( $self->_get_param( 1, $left_mode ), $self->_get_param( 2, $right_mode ) );
+
+    my $val = $left < $right ? 1 : 0;
+    $self->_set_param( 3, $result_mode, $val );
+    $self->_inc_instr_ptr($BINARY_INSTR_LENGTH);
+
+    return;
+}
+
+# Executes an equals instruction.
+sub _equals {
+    my ( $self, $left_mode, $right_mode, $result_mode ) = @_;
+    my ( $left, $right ) = ( $self->_get_param( 1, $left_mode ), $self->_get_param( 2, $right_mode ) );
+
+    my $val = $left == $right ? 1 : 0;
+    $self->_set_param( 3, $result_mode, $val );
+    $self->_inc_instr_ptr($BINARY_INSTR_LENGTH);
 
     return;
 }
