@@ -2,6 +2,7 @@ package Advent::Intcode;
 
 use strict;
 use warnings;
+use feature 'say';
 use autodie;
 use Const::Fast;
 use English '-no_match_vars';
@@ -59,14 +60,14 @@ sub _build_memory {
     return \@code;
 }
 
-const my $ADD    => 1;
-const my $MUL    => 2;
-const my $INPUT  => 3;
-const my $OUTPUT => 4;
+const my $ADD    => 01;
+const my $MUL    => 02;
+const my $INPUT  => 03;
+const my $OUTPUT => 04;
 const my $HALT   => 99;
 
-const my $BINARY_OP_LENGTH => 4;
-const my $IO_OP_LENGTH     => 2;
+const my $BINARY_INSTR_LENGTH => 4;
+const my $IO_INSTR_LENGTH     => 2;
 
 # Executes an Intcode until it completes.
 #
@@ -79,73 +80,108 @@ sub run {
     while ( $self->_instr_ptr < $self->memory->@* ) {
         my $op = $self->memory->[ $self->_instr_ptr ];
 
-        # TODO move to dispatch table off the op code
-        return if $op == $HALT;
-        $self->_add(),    next if $op == $ADD;
-        $self->_mul(),    next if $op == $MUL;
-        $self->_input(),  next if $op == $INPUT;
-        $self->_output(), next if $op == $OUTPUT;
+        my ( $op_code, @param_modes ) = _parse_instr($op);
 
-        croak "Unknown op code $op";
+        # TODO move to dispatch table off the op code
+        return if $op_code == $HALT;
+        $self->_add(@param_modes),    next if $op_code == $ADD;
+        $self->_mul(@param_modes),    next if $op_code == $MUL;
+        $self->_input(@param_modes),  next if $op_code == $INPUT;
+        $self->_output(@param_modes), next if $op_code == $OUTPUT;
+
+        croak "Unknown op code $op_code";
     }
 
     croak "instruction pointer has overrun the end of memory";
+}
+
+const my $PARAM_POSITION_MODE  => 0;
+const my $PARAM_IMMEDIATE_MODE => 1;
+
+# Parses an instruction into the op code and parameter modes
+sub _parse_instr {
+    my $op = shift;
+
+    my $expanded = sprintf "%05d", $op;
+    my ( $par_3_mode, $par_2_mode, $par_1_mode, $op_code ) = $expanded =~ /^(\d)(\d)(\d)(\d\d)$/
+      or croak "invalid operation $op";
+
+    return $op_code, $par_1_mode, $par_2_mode, $par_3_mode;
+}
+
+sub _get_param {
+    my ( $self, $num, $mode ) = @_;
+
+    if ( $mode == $PARAM_POSITION_MODE ) {
+        my $addr = $self->memory->[ $self->_instr_ptr + $num ];
+        return $self->memory->[$addr];
+    }
+    elsif ( $mode == $PARAM_IMMEDIATE_MODE ) {
+        return $self->memory->[ $self->_instr_ptr + $num ];
+    }
+
+    croak "invalid parameter mode $mode";
+}
+
+sub _set_param {
+    my ( $self, $num, $mode, $val ) = @_;
+
+    if ( $mode == $PARAM_POSITION_MODE ) {
+        my $addr = $self->memory->[ $self->_instr_ptr + $num ];
+        $self->memory->[$addr] = $val;
+        return;
+    }
+    elsif ( $mode == $PARAM_IMMEDIATE_MODE ) {
+        $self->memory->[ $self->_instr_ptr + $num ] = $val;
+        return;
+    }
+
+    croak "invalid parameter mode $mode";
 }
 
 # TODO generalise the implementation of binary operators
 
 # Executes an on the current Intcode state.
 sub _add {
-    my $self = shift;
+    my ( $self, $left_op_mode, $right_op_mode, $result_mode ) = @_;
+    my ( $left, $right ) = ( $self->_get_param( 1, $left_op_mode ), $self->_get_param( 2, $right_op_mode ) );
 
-    my ( $addr_1, $addr_2, $result_addr ) =
-      $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + $BINARY_OP_LENGTH ];
-    my ( $val_1, $val_2 ) = $self->memory->@[ $addr_1, $addr_2 ];
-    $self->memory->[$result_addr] = $val_1 + $val_2;
-
-    # increment the intstruction pointer
-    $self->_inc_instr_ptr($BINARY_OP_LENGTH);
+    $self->_set_param( 3, $result_mode, $left + $right );
+    $self->_inc_instr_ptr($BINARY_INSTR_LENGTH);
 
     return;
 }
 
 # Executes a multiply on the current Intcode state.
 sub _mul {
-    my $self = shift;
+    my ( $self, $left_op_mode, $right_op_mode, $result_mode ) = @_;
+    my ( $left, $right ) = ( $self->_get_param( 1, $left_op_mode ), $self->_get_param( 2, $right_op_mode ) );
 
-    my ( $addr_1, $addr_2, $result_addr ) =
-      $self->memory->@[ $self->_instr_ptr + 1 .. $self->_instr_ptr + $BINARY_OP_LENGTH ];
-    my ( $val_1, $val_2 ) = $self->memory->@[ $addr_1, $addr_2 ];
-    $self->memory->[$result_addr] = $val_1 * $val_2;
-
-    # increment the intstruction pointer
-    $self->_inc_instr_ptr($BINARY_OP_LENGTH);
+    $self->_set_param( 3, $result_mode, $left * $right );
+    $self->_inc_instr_ptr($BINARY_INSTR_LENGTH);
 
     return;
 }
 
 # Executes an input instruction.
 sub _input {
-    my $self = shift;
+    my ( $self, $mode ) = @_;
     my $addr = $self->memory->[ $self->_instr_ptr + 1 ];
 
     my $input = shift $self->input->@*;
-    $self->memory->[$addr] = $input;
-
-    $self->_inc_instr_ptr($IO_OP_LENGTH);
+    $self->_set_param( 1, $mode, $input );
+    $self->_inc_instr_ptr($IO_INSTR_LENGTH);
 
     return;
 }
 
 # Executes an output instruction.
 sub _output {
-    my $self = shift;
-    my $addr = $self->memory->[ $self->_instr_ptr + 1 ];
+    my ( $self, $mode ) = @_;
 
-    my $val = $self->memory->[$addr];
+    my $val = $self->_get_param( 1, $mode );
     push $self->output->@*, $val;
-
-    $self->_inc_instr_ptr($IO_OP_LENGTH);
+    $self->_inc_instr_ptr($IO_INSTR_LENGTH);
 
     return;
 }

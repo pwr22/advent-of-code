@@ -7,5 +7,6 @@ use feature 'say';
 use Advent::Intcode;
 use Advent::Input;
 
-my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5 );
+my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5, input => [1] );
+$s->run();
 say "$0: ", join ' ', $s->output->@*;
