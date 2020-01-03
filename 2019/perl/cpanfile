@@ -7,3 +7,4 @@ requires 'Type::Tiny';
 requires 'Data::GUID';
 requires 'List::Util';
 requires 'Data::Printer';
+requires 'MooX::StrictConstructor';

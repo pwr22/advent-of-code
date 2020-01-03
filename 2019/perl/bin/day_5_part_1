@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+
+use Advent::Intcode;
+use Advent::Input;
+
+my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5 );
+say "$0: ", join ' ', $s->output->@*;
