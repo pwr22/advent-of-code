@@ -1789,4 +1789,7 @@ N1D)W97
 S4K)9VX
 21D)PB1';
 
+const our $DAY_6_ORIGIN => 'YOU';
+const our $DAY_6_DEST => 'SAN';
+
 1;
