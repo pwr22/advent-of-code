@@ -6,6 +6,7 @@ use Moo;
 use MooX::StrictConstructor;
 use MooX::HandlesVia;
 use Types::Standard qw( HashRef InstanceOf );
+use namespace::autoclean;
 
 has 'name' => (
     is       => 'ro',
@@ -19,11 +20,11 @@ has 'orbits' => (
 
 has 'orbited_by' => (
     is          => 'rw',
-    isa         => HashRef,
+    isa         => HashRef[InstanceOf['Advent::OrbitMap::Object']],
     default     => sub { {} },
     handles_via => 'Hash',
     handles     => {
-        add_orbiter   => 'add',
+        add_orbiter   => 'set',
         is_orbited_by => 'get',
         get_orbiters  => 'values',
     },

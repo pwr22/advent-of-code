@@ -39,6 +39,7 @@ sub _build_objects {
         $objects{$orbiter} //= Advent::OrbitMap::Object->new( name => $orbiter );
 
         $objects{$orbiter}->orbits($objects{$orbited});
+        $objects{$orbited}->add_orbiter($objects{$orbiter}); # makes a circular reference but who cares
     }
 
     return \%objects;
@@ -48,6 +49,7 @@ sub _build_objects {
 sub get_total_orbits {
     my $self = shift;
 
+    # TODO Do this functionally.
     my $total = 0;
 
     for my $object ( values $self->objects->%* ) {
