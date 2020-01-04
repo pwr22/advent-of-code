@@ -38,8 +38,7 @@ sub _build_objects {
         $objects{$orbited} //= Advent::OrbitMap::Object->new( name => $orbited );
         $objects{$orbiter} //= Advent::OrbitMap::Object->new( name => $orbiter );
 
-        $objects{$orbiter}->orbits->{orbited} = $objects{$orbited};
-        weaken $objects{$orbiter}->orbits->{orbited};
+        $objects{$orbiter}->orbits($objects{$orbited});
     }
 
     return \%objects;

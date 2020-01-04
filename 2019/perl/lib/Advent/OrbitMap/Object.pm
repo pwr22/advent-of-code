@@ -5,7 +5,7 @@ use warnings;
 use Moo;
 use MooX::StrictConstructor;
 use MooX::HandlesVia;
-use Types::Standard qw( HashRef );
+use Types::Standard qw( HashRef InstanceOf );
 
 has 'name' => (
     is       => 'ro',
@@ -13,22 +13,29 @@ has 'name' => (
 );
 
 has 'orbits' => (
-    is      => 'ro',
-    isa     => HashRef,
-    default => sub { {} },
+    is       => 'rw',
+    isa      => InstanceOf ['Advent::OrbitMap::Object'],
+);
+
+has 'orbited_by' => (
+    is          => 'rw',
+    isa         => HashRef,
+    default     => sub { {} },
+    handles_via => 'Hash',
+    handles     => {
+        add_orbiter   => 'add',
+        is_orbited_by => 'get',
+        get_orbiters  => 'values',
+    },
 );
 
 sub get_total_orbits {
     my $self = shift;
 
-    my $total = 0;
+    return 0 unless defined $self->orbits;
 
-    for my $object ( values $self->orbits->%* ) {
-        $total += 1;                            # the direct orbit
-        $total += $object->get_total_orbits;    # indirect orbits
-    }
-
-    return $total;
+    # direct + indirect
+    return 1 + $self->orbits->get_total_orbits();
 }
 
 1;
