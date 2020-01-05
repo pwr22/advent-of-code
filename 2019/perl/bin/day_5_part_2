@@ -3,10 +3,14 @@
 use strict;
 use warnings;
 use feature 'say';
+use autodie;
 
 use Advent::Intcode;
 use Advent::Input;
 
-my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5, input => [5] );
+my $input = "5\n";
+open my $fh, '<', \$input;
+my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5, input => $fh, output => \*STDOUT );
+
+print "$0: ";
 $s->run();
-say "$0: ", join ' ', $s->output->@*;

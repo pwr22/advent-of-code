@@ -12,6 +12,7 @@ use MooX::HandlesVia;
 use Types::Standard ':all';
 use overload q{""} => \&as_str;
 use Carp;
+use namespace::autoclean;
 
 use Advent::Input;
 
@@ -35,9 +36,8 @@ has 'memory' => (
 );
 
 has [qw[ input output ]] => (
-    is      => 'ro',
-    isa     => ArrayRef,
-    default => sub { [] },
+    is  => 'ro',
+    isa => FileHandle,
 );
 
 has '_instr_ptr' => (
@@ -178,8 +178,10 @@ sub _input {
     my ( $self, $mode ) = @_;
     my $addr = $self->memory->[ $self->_instr_ptr + 1 ];
 
-    my $input = shift $self->input->@*;
-    $self->_set_param( 1, $mode, $input );
+    my $fh  = $self->input;
+    my $val = <$fh>;
+    chomp($val);
+    $self->_set_param( 1, $mode, $val );
     $self->_inc_instr_ptr($IO_INSTR_LENGTH);
 
     return;
@@ -190,7 +192,9 @@ sub _output {
     my ( $self, $mode ) = @_;
 
     my $val = $self->_get_param( 1, $mode );
-    push $self->output->@*, $val;
+
+    my $fh = $self->output;
+    say $fh $val or croak $!;
     $self->_inc_instr_ptr($IO_INSTR_LENGTH);
 
     return;

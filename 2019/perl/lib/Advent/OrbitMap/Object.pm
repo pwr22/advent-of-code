@@ -35,6 +35,8 @@ has 'orbited_by' => (
 );
 
 sub get_total_orbits {
+    no warnings 'recursion';
+
     my $self = shift;
 
     return 0 unless defined $self->orbits;
@@ -44,6 +46,8 @@ sub get_total_orbits {
 }
 
 sub get_shortest_path {
+    no warnings 'recursion';
+
     my ( $self, $dest, $skip ) = @_;
 
     return $self if $self == $dest;    # don't need to go anywhere if we're already there!
