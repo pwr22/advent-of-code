@@ -2,13 +2,20 @@
 
 use strict;
 use warnings;
+use File::Slurp qw( read_file );
+use File::Spec::Functions qw( catfile );
+use FindBin;
 use Test::More tests => 2;
 
 use Advent::Intcode;
-use Advent::Input;
+
+my $f = catfile $FindBin::Bin, '..', 'inputs', 'day-2.txt';
+
+my $prog = read_file($f);
+chomp($prog);
 
 # [ <INTCODE> <DESIRED_OUTPUT> <TARGET_NOUN> <TARGET_VERB> ]
-my @testcases = ( [ $Advent::Input::DAY_2, 19690720, 57, 41 ], );
+my @testcases = ( [ $prog, 19690720, 57, 41 ], );
 
 for (@testcases) {
     my ( $start_state, $output, $exp_noun, $exp_verb ) = $_->@*;

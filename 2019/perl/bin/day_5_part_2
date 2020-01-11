@@ -4,13 +4,17 @@ use strict;
 use warnings;
 use feature 'say';
 use autodie;
+use File::ShareDir 'dist_file';
+use File::Slurp 'read_file';
 
 use Advent::Intcode;
-use Advent::Input;
+
+my $prog = read_file( dist_file( 'Advent', 'day-5.txt' ) );
+chomp $prog;
 
 my $input = "5\n";
 open my $fh, '<', \$input;
-my $s = Advent::Intcode->new( state => $Advent::Input::DAY_5, input => $fh, output => \*STDOUT );
+my $s = Advent::Intcode->new( state => $prog, input => $fh, output => \*STDOUT );
 
 print "$0: ";
 $s->run();

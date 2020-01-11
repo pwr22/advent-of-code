@@ -9,3 +9,7 @@ requires 'List::Util';
 requires 'Data::Printer';
 requires 'MooX::StrictConstructor';
 requires 'Try::Tiny';
+requires 'Algorithm::Permute';
+requires 'File::Slurp';
+requires 'File::ShareDir';
+requires 'File::ShareDir::Install';

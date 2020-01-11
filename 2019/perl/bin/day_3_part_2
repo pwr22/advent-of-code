@@ -3,11 +3,12 @@
 use strict;
 use warnings;
 use feature 'say';
+use File::Slurp qw( read_file );
+use File::ShareDir qw( dist_file );
 
 use Advent::Panel;
-use Advent::Input;
 
-my ( $wire_1, $wire_2 ) = ( $Advent::Input::DAY_3_LINE_1, $Advent::Input::DAY_3_LINE_2 );
+my ( $wire_1, $wire_2 ) = read_file( dist_file( 'Advent', 'day-3.txt' ), chomp => 1 );
 
 my $panel = Advent::Panel->new();
 $panel->add_wire($wire_1);

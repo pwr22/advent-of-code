@@ -3,10 +3,11 @@
 use strict;
 use warnings;
 use feature 'say';
+use File::ShareDir 'dist_file';
+use File::Slurp 'read_file';
 
 use Advent::PasswordCracker;
-use Advent::Input;
 
-my $c =
-  Advent::PasswordCracker->new( start => $Advent::Input::DAY_4_RANGE_START, end => $Advent::Input::DAY_4_RANGE_END );
+my ( $s, $e ) = read_file( dist_file( 'Advent', 'day-4.txt' ), chomp => 1 );
+my $c = Advent::PasswordCracker->new( start => $s, end => $e );
 say "$0: ", $c->get_candidate_count();

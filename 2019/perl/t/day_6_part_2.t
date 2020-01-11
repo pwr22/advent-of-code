@@ -2,12 +2,9 @@
 
 use strict;
 use warnings;
-use experimental 'declared_refs';
-use feature 'declared_refs';
-use Test::More tests => 2;
+use Test::More tests => 1;
 
 use Advent::OrbitMap;
-use Advent::Input;
 
 # [ <ORBIT_MAP_SPEC> <ORIGIN> <DEST> <EXP_ORB_XFERS> ]
 my @testcases = (
@@ -27,8 +24,6 @@ K)YOU
 I)SAN
 ', 'YOU', 'SAN', 4
     ],
-
-    [ $Advent::Input::DAY_6, 'YOU', 'SAN', 514 ],
 );
 
 for (@testcases) {

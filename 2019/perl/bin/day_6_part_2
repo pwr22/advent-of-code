@@ -3,9 +3,12 @@
 use strict;
 use warnings;
 use feature 'say';
+use File::Slurp qw( read_file );
+use File::ShareDir qw( dist_file );
 
 use Advent::OrbitMap;
-use Advent::Input;
 
-my $m = Advent::OrbitMap->new( spec => $Advent::Input::DAY_6 );
-say "$0: ", $m->get_orbital_transfers( $Advent::Input::DAY_6_ORIGIN, $Advent::Input::DAY_6_DEST );
+my $orbits = read_file( dist_file( 'Advent', 'day-6.txt' ) );
+
+my $m = Advent::OrbitMap->new( spec => $orbits );
+say "$0: ", $m->get_orbital_transfers( 'YOU', 'SAN' );

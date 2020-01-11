@@ -5,7 +5,6 @@ use warnings;
 use Test::More tests => 3;
 
 use Advent::Panel;
-use Advent::Input;
 
 # [ <WIRE_1> <WIRE_2> <EXP_DIST> ]
 my @testcases = (

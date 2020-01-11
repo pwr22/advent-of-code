@@ -11,6 +11,6 @@ RUN cpm install --global
 # now copy across everything else, build, test and install
 WORKDIR /build
 COPY . .
-RUN prove -lv && perl Makefile.PL && make install
+RUN prove -lvj8 && perl Makefile.PL && make install
 
 CMD for prog in /usr/local/bin/day_*; do $prog; done

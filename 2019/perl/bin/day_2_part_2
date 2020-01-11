@@ -3,10 +3,13 @@
 use strict;
 use warnings;
 use feature 'say';
+use File::Slurp qw( read_file );
+use File::ShareDir qw( dist_file );
 
 use Advent::Intcode;
-use Advent::Input;
 
-my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
+my $prog = read_file(dist_file('Advent', 'day-2.txt'));
+
+my $sim = Advent::Intcode->new( state => $prog );
 my ($noun, $verb) = $sim->find_inputs_for(19690720);
 say "$0: ", 100 * $noun + $verb;

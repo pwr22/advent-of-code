@@ -1,0 +1,11 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+use File::ShareDir qw( dist_file );
+use File::Spec::Functions qw( catfile );
+use File::Slurp;
+
+my $f = dist_file( 'Advent', shift . '.txt' );
+print read_file($f);

@@ -1,0 +1,15 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use feature 'say';
+use File::Slurp;
+
+use Advent::Intcode;
+
+my $prog = read_file(shift);
+chomp $prog;
+
+my $s = Advent::Intcode->new( intcode => $prog, input => \*STDIN, output => \*STDOUT );
+print "$0: ";
+$s->run();

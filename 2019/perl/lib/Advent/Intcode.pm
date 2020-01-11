@@ -14,8 +14,6 @@ use overload q{""} => \&as_str;
 use Carp;
 use namespace::autoclean;
 
-use Advent::Input;
-
 our $VERSION = v0.0.1;
 
 has 'initial_state' => (
@@ -289,7 +287,8 @@ sub find_inputs_for {
 
     for my $noun ( $MIN_FIND_VALUE .. $MAX_FIND_VALUE ) {
         for my $verb ( $MIN_FIND_VALUE .. $MAX_FIND_VALUE ) {
-            my $sim = Advent::Intcode->new( state => $Advent::Input::DAY_2 );
+            # TODO use this object and reset it each time
+            my $sim = Advent::Intcode->new( state => $self->initial_state );
             $sim->set_noun($noun);
             $sim->set_verb($verb);
             $sim->run();
