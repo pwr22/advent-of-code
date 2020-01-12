@@ -1,0 +1,17 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use autodie;
+use File::Slurp 'read_file';
+use File::ShareDir 'dist_file';
+
+use Advent::Intcode;
+
+my $f = shift;
+my $prog  = read_file( dist_file( 'Advent', $f ) );
+chomp $prog;
+
+my $s = Advent::Intcode->new( state => $prog, input => \*STDIN, output => \*STDOUT );
+
+$s->run();

@@ -7,6 +7,15 @@ use File::Slurp;
 
 use Advent::Intcode;
 
+my ($f, $i) = @ARGV;
+my $prog  = read_file( dist_file( 'Advent', $f ) );
+chomp $prog;
+
+my $s = Advent::SignalAmplifier->new( intcode => $prog );
+say "$0: ", $s->find_optimal_phases();
+
+
+
 my $prog = read_file(shift);
 chomp $prog;
 

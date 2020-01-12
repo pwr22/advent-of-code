@@ -5,11 +5,22 @@ use warnings;
 use feature 'say';
 use File::Slurp qw( read_file );
 use File::ShareDir qw( dist_file );
+use Algorithm::Permute qw( permute );
+use Const::Fast;
 
-use Advent::SignalAmplifier;
+const my $PROG => 'day-7.txt';
+const my $INTCODE => 'intcode';
+const my $CMD => "$INTCODE $PROG";
 
-my $prog = read_file(dist_file('Advent', 'day-7.txt'));
-chomp $prog;
 
-my $s = Advent::SignalAmplifier->new( intcode => $prog );
-say "$0: ", $s->find_optimal_phases();
+my @phases  = ( 0 .. 4 );
+my $max_sig = 0;
+
+permute {
+    my $output = `(echo $phases[0]; echo 0) | (echo $phases[1]; $CMD) | (echo $phases[2]; $CMD) | (echo $phases[3]; $CMD) | (echo $phases[4]; $CMD) | $CMD`;
+    chomp $output;
+    $max_sig = $output if $output > $max_sig;
+}
+@phases;
+
+say "$0: $max_sig";

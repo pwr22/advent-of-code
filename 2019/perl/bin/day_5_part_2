@@ -1,20 +1,9 @@
-#!/usr/bin/env perl
+#!/usr/bin/env bash
 
-use strict;
-use warnings;
-use feature 'say';
-use autodie;
-use File::ShareDir 'dist_file';
-use File::Slurp 'read_file';
+set -o errexit
+set -o nounset
+set -o pipefail
 
-use Advent::Intcode;
 
-my $prog = read_file( dist_file( 'Advent', 'day-5.txt' ) );
-chomp $prog;
-
-my $input = "5\n";
-open my $fh, '<', \$input;
-my $s = Advent::Intcode->new( state => $prog, input => $fh, output => \*STDOUT );
-
-print "$0: ";
-$s->run();
+echo -n "$0: "
+echo 5 | intcode day-5.txt
