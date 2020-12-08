@@ -26,5 +26,5 @@ is_deeply(
     'correct pair summing to 2020 is found'
 );
 
-is( $r->find_2020_product(),
+is( $r->find_2020_pair_product(),
     $PRODUCT, 'correct product of pair summing to 2020 is found' );

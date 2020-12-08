@@ -11,6 +11,7 @@ WriteMakefile(
     EXE_FILES    => [
         qw[
             bin/advent_2020_perl_day_1_part_1
+            bin/advent_2020_perl_day_1_part_2
           ]
     ],
 );

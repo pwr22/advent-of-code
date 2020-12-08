@@ -13,4 +13,4 @@ use Advent::2020::ExpenseReport;
 const my @ENTRIES => read_file( dist_file( 'Advent-2020', 'day-1.txt' ) );
 
 my $r = Advent::2020::ExpenseReport->new( entries => \@ENTRIES );
-say "$0: ", $r->find_2020_pair_product();
+say "$0: ", $r->find_2020_triplet_product();

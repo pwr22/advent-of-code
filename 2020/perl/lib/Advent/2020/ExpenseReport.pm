@@ -28,12 +28,36 @@ sub _find_2020_pair {
 }
 
 # return product of the two entries summing to 2020
-sub find_2020_product {
+sub find_2020_pair_product {
     my ($self) = @_;
 
-    my ($n, $m) = $self->_find_2020_pair();
+    my ( $n, $m ) = $self->_find_2020_pair();
 
     return $n * $m;
+}
+
+# find the two entries summing to 2020
+sub _find_2020_triplet {
+    my ($self) = @_;
+
+    for my $a ( $self->entries->@* ) {
+        for my $b ( $self->entries->@* ) {
+            for my $c ( $self->entries->@* ) {
+                return $a, $b, $c if $a + $b + $c == 2020;
+            }
+        }
+    }
+
+    croak "cannot find any entries summing to 2020";
+}
+
+# return product of the two entries summing to 2020
+sub find_2020_triplet_product {
+    my ($self) = @_;
+
+    my ( $a, $b, $c ) = $self->_find_2020_triplet();
+
+    return $a * $b * $c;
 }
 
 use namespace::autoclean;
