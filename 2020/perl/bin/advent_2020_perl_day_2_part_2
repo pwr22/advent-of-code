@@ -1,0 +1,15 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use autodie;
+use Const::Fast;
+use feature 'say';
+use File::Slurp qw( read_file );
+use File::ShareDir qw( dist_file );
+
+use Advent::2020::Password::Policy2;
+
+my @pws = read_file( dist_file( 'Advent-2020', 'day-2.txt' ) );
+my $valid_count = grep { Advent::2020::Password::Policy2->new( policy => $_)->is_valid()} @pws;
+say "$0: $valid_count";
