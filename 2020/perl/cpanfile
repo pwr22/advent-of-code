@@ -1,0 +1,15 @@
+requires 'autodie';
+requires 'Const::Fast';
+requires 'Moo';
+requires 'MooX::HandlesVia';
+requires 'MooX::StrictConstructor';
+requires 'namespace::autoclean';
+requires 'Type::Tiny';
+requires 'Data::GUID';
+requires 'List::Util';
+requires 'Data::Printer';
+requires 'Try::Tiny';
+requires 'Algorithm::Permute';
+requires 'File::Slurp';
+requires 'File::ShareDir';
+requires 'File::ShareDir::Install';

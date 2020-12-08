@@ -3,8 +3,6 @@
 use strict;
 use warnings;
 use feature 'say';
-use File::Slurp qw( read_file );
-use File::ShareDir qw( dist_file );
 use Algorithm::Permute qw( permute );
 use Const::Fast;
 

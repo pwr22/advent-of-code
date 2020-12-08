@@ -1,2 +1,25 @@
-#!/bin/sh 
+#!/usr/bin/env perl
 
+use strict;
+use warnings;
+use feature 'say';
+use Algorithm::Permute qw( permute );
+use Const::Fast;
+
+const my $PROG => 'day-7.txt';
+const my $INTCODE => 'intcode';
+const my $CMD => "$INTCODE $PROG";
+const my $FIFO => '/tmp/day_7_part_2_fifo';
+
+
+my @phases  = ( 5 .. 9 );
+my $max_sig = 0;
+
+permute {
+    my $output = `mkfifo $FIFO; ((echo $phases[0]; echo 0) > $FIFO &); (echo $phases[1]; $CMD) < $FIFO | (echo $phases[2]; $CMD) | (echo $phases[3]; $CMD) | (echo $phases[4]; $CMD) | $CMD | tee $FIFO | tail -n 1; rm $FIFO`;
+    chomp $output;
+    $max_sig = $output if $output > $max_sig;
+}
+@phases;
+
+say "$0: $max_sig";

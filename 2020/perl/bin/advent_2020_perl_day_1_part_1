@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use autodie;
+use Const::Fast;
+use feature 'say';
+use File::Slurp qw( read_file );
+use File::ShareDir qw( dist_file );
+
+use Advent::2020::ExpenseReport;
+
+const my @ENTRIES => read_file( dist_file( 'Advent-2020', 'day-1.txt' ) );
+
+my $r = Advent::2020::ExpenseReport->new( entries => \@ENTRIES );
+say $r->find_2020_product();

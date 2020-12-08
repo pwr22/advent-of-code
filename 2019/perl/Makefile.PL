@@ -12,7 +12,7 @@ WriteMakefile(
         qw[
           bin/day_2_part_2 bin/day_3_part_1 bin/day_3_part_2 bin/day_4_part_1
           bin/day_4_part_2 bin/day_5_part_1 bin/day_5_part_2 bin/day_6_part_1
-          bin/day_6_part_2 bin/day_7_part_1 bin/get-input bin/intcode
+          bin/day_6_part_2 bin/day_7_part_1 bin/day_7_part_2 bin/get-input bin/intcode
           ]
     ],
 );
